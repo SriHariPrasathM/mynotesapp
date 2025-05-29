@@ -1,8 +1,15 @@
 require('dotenv').config({ path : '../.env' });
 const express = require('express');
 const db = require('./db');
+const path = require('path');
+const authRoute = require('./routes/authRoutes'); 
 
 const app = express();
+
+app.use(express.json()); // Middleware to parse JSON bodies
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve static files from the 'uploads' directory
+
+app.use('/api/v1/auth', authRoute);
 
 const PORT = process.env.PORT || 3000;
 
