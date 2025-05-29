@@ -3,10 +3,12 @@ const express = require('express');
 const db = require('./db');
 const path = require('path');
 const authRoute = require('./routes/authRoutes'); 
+const cookieParser = require('cookie-parser');
 
 const app = express();
 
 app.use(express.json()); // Middleware to parse JSON bodies
+app.use(cookieParser()); // Middleware to parse cookies
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve static files from the 'uploads' directory
 
 app.use('/api/v1/auth', authRoute);
