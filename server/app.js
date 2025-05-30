@@ -3,6 +3,7 @@ const express = require('express');
 const db = require('./db');
 const path = require('path');
 const authRoute = require('./routes/authRoutes'); 
+const noteRoute = require('./routes/notesRoutes');
 const cookieParser = require('cookie-parser');
 
 const app = express();
@@ -12,6 +13,7 @@ app.use(cookieParser()); // Middleware to parse cookies
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve static files from the 'uploads' directory
 
 app.use('/api/v1/auth', authRoute);
+app.use('/api/v1/notes', noteRoute);
 
 const PORT = process.env.PORT || 3000;
 
