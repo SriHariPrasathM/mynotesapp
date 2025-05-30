@@ -23,10 +23,7 @@ app.use(errorHandlerMiddleware); // Middleware for handling errors
 
 const PORT = process.env.PORT || 3000;
 
-app.get('/', (req, res) => {
-    res.send('Hello, World!');
-});
-
+// Start the server and connect to the database
 async function start() {
     try{
         await db.query('SELECT 1');

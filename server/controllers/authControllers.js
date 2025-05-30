@@ -1,6 +1,8 @@
 const db = require('../db');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const fs = require('fs').promises;
+const path = require('path');
 const upload = require('../middleware/fileUpload');
 const { 
     BadRequestError, NotFoundError, ConflictingRequestError, UnauthenticatedError
@@ -13,8 +15,7 @@ const {
 const register = async (req, res) => {
     // Validate request body
     const { username, password, email, contact } = req.body;
-    const profile_image = req.file ? `/uploads/${req.file.filename}` : null; // Default to null if no file is uploaded
-    console.log(email);
+    const profile_image = req.file ? `/uploads/${req.file.filename}` : `/uploads/default.png`; // Default to null if no file is uploaded
     
     if(!username || !password || !email) {
         throw new BadRequestError('Username, password and email fields are required');
@@ -84,9 +85,6 @@ const getCurrentUser = async (req, res) => {
     const [users] = await db.query(
         "SELECT id, username, email, contact, profile_picture FROM users WHERE id = ?", [userId]
     );
-    if (users.length === 0) {
-        throw new NotFoundError('User not found, unable to retrieve profile');
-    }
     res.status(200).json({
         user: users[0]
     });
@@ -94,14 +92,23 @@ const getCurrentUser = async (req, res) => {
 
 const updateProfilePicture = async (req, res) => {
     const userId = req.user.id; 
+    const newFilename = req.file ? req.file.filename : null;
 
-    const profile_image = req.file ? `/uploads/${req.file.filename}` : null;
-    const [result] = await db.query(
+    const [users] = await db.query(
+        'SELECT profile_picture FROM users WHERE id = ?', [userId]
+    );
+    const oldProfilePicture = users[0]?.profile_picture; // Get the old profile picture path from the database
+    
+    const profile_image = newFilename ? `/uploads/${newFilename}` : `/uploads/default.png`;
+    await db.query(
         'UPDATE users SET profile_picture = ? WHERE id = ?', 
         [profile_image, userId]
     );
-    if(result.affectedRows === 0) {
-        throw new NotFoundError('User not found, unable to update profile picture');
+
+    if(oldProfilePicture && oldProfilePicture !== '/uploads/default.png'){
+        // Delete the old profile picture file if it exists and is not the default image
+        const oldFilePath = path.join(__dirname, '..', oldProfilePicture);
+        await fs.unlink(oldFilePath); // Delete the old file
     }
     res.status(200).json({
         message: 'Profile picture updated successfully'
