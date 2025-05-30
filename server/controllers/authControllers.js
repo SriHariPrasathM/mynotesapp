@@ -2,6 +2,7 @@ const db = require('../db');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const upload = require('../middleware/fileUpload');
+const { BadRequestError } = require('../errors');
 
 const register = async (req, res) => {
     try{
@@ -19,7 +20,7 @@ const register = async (req, res) => {
         const [existingUser] = await db.query(
             'SELECT * FROM users WHERE username = ? OR email = ?', [username, email]);
         if (existingUser.length > 0) {
-            return res.status(400).json({
+            return res.status(409).json({
                 message: 'Username or email already exists'
             });
         }

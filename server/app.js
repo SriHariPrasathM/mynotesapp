@@ -2,9 +2,11 @@ require('dotenv').config({ path : '../.env' });
 const express = require('express');
 const db = require('./db');
 const path = require('path');
+const notFoundHandler = require('./middleware/not-found');
 const authRoute = require('./routes/authRoutes'); 
 const noteRoute = require('./routes/notesRoutes');
 const cookieParser = require('cookie-parser');
+const errorHandlerMiddleware = require('./middleware/error-handler');
 
 const app = express();
 
@@ -12,8 +14,12 @@ app.use(express.json()); // Middleware to parse JSON bodies
 app.use(cookieParser()); // Middleware to parse cookies
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve static files from the 'uploads' directory
 
+
 app.use('/api/v1/auth', authRoute);
 app.use('/api/v1/notes', noteRoute);
+
+app.use(notFoundHandler); // Middleware for handling 404 errors
+app.use(errorHandlerMiddleware); // Middleware for handling errors
 
 const PORT = process.env.PORT || 3000;
 
