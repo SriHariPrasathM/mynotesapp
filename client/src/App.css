@@ -49,6 +49,12 @@ nav{
     transition : 0.5s;
 }
 
+.nav-links span{
+    font-size : 1.2rem;
+    font-Style : italic;
+    color : #fff;
+}
+
 /* Style for non-active links on hover */
 .nav-link:not(.active):hover { 
   font-weight: 500;

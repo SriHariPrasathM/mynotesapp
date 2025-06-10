@@ -18,6 +18,7 @@ function Navbar() {
           {          
             user ? (
               <>
+                <span>Welcome {user.user.username}!</span>
                 <NavLink to='/dashboard' className={getNavLinkClass}>Dashboard</NavLink>
                 <NavLink to='/profile' className={getNavLinkClass}>Profile</NavLink>
                 <button onClick={() => logout()}>Logout</button>
