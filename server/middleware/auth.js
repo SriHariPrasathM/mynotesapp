@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 const auth = (req, res, next) => {
-    const token = req.cookies.token;
+    const token = req.cookies.token; //Requires cookie-parser middleware to parse cookies
     if (!token) {
         return res.status(401).json({ message: 'Access denied. No token provided.' });
     } 

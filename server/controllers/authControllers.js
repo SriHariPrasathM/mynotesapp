@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const fs = require('fs').promises;
 const path = require('path');
-const upload = require('../middleware/fileUpload');
 const { 
     BadRequestError, NotFoundError, ConflictingRequestError, UnauthenticatedError
     } = require('../errors');
@@ -69,7 +68,7 @@ const login = async (req, res) => {
     );
 
     // Set the token in a cookie
-    // Note: Ensure that the 'cookie-parser' middleware is used in your app
+    // Native cookie support in Express
     res.cookie('token', token, {
         httpOnly: true, // Prevent client-side JavaScript from accessing the cookie
         maxAge: new Date(Date.now() + process.env.COOKIE_EXPIRATION * 1000), // Set cookie expiration
@@ -78,6 +77,14 @@ const login = async (req, res) => {
     res.status(200).json({
         message: 'Login successful'
     });
+};
+
+const logout = async (req, res) => {
+    //Native cookie support in Express
+    res.clearCookie('token');
+    res.status(200).json({
+        message: 'Logout successful'
+    })
 };
 
 const getCurrentUser = async (req, res) => {
@@ -111,10 +118,11 @@ const updateProfilePicture = async (req, res) => {
         await fs.unlink(oldFilePath); // Delete the old file
     }
     res.status(200).json({
-        message: 'Profile picture updated successfully'
+        message: 'Profile picture updated successfully',
+        profile_picture: profile_image
     });
 }
 
 module.exports = {
-    register, login, getCurrentUser, updateProfilePicture
+    register, login, logout, getCurrentUser, updateProfilePicture
 };

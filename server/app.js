@@ -7,11 +7,17 @@ const authRoute = require('./routes/authRoutes');
 const noteRoute = require('./routes/notesRoutes');
 const cookieParser = require('cookie-parser');
 const errorHandlerMiddleware = require('./middleware/error-handler');
+const cors = require('cors');
 
 const app = express();
 
 app.use(express.json()); // Middleware to parse JSON bodies
 app.use(cookieParser()); // Middleware to parse cookies
+app.use(cors({
+    origin: 'http://localhost:5173', // Allow requests from the client URL
+    credentials: true, // Allow cookies to be sent with requests
+    })
+);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve static files from the 'uploads' directory
 
 
