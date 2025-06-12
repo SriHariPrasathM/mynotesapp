@@ -14,7 +14,7 @@ function App() {
   const { user, loading } = useContext(AuthContext);
   
   if(loading) {
-    return <div className='loading'>Loading...</div>
+    return <div className='loader'>Loading...</div>
   }
   return (
     <BrowserRouter>
