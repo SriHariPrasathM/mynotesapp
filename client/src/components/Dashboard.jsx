@@ -22,7 +22,7 @@ function Dashboard() {
       setNote("");
       fetchNotes(); // Refresh notes after creating or updating
     } catch (error) {
-      setError("Error creating or updating note:", error);
+      setError("Error creating or updating note");
     }
   }
 
@@ -38,8 +38,13 @@ function Dashboard() {
         fetchNotes(); // Refresh notes after deletion
       }
     } catch (error) {
-      setError("Error deleting note:", error);
+      setError("Error deleting note");
     }
+  }
+
+  const handleCancelNote = () => {
+    setNote("");
+    setEditingNoteId(null);
   }
 
   const fetchNotes = async () => {
@@ -47,7 +52,14 @@ function Dashboard() {
       const response = await axios.get('http://localhost:5000/api/v1/notes', { withCredentials: true });
       setNotes(response.data.notes);
     } catch (error) {
-      setError("Error fetching notes:", error);
+      if(error.response && error.response.status === 404) {
+        setNotes([]);
+        setError("");
+      }
+      else{
+        setError("Error fetching notes");
+        console.log(error);
+      }
     }
   }
 
@@ -61,24 +73,27 @@ function Dashboard() {
       {error && <p className='error'>{error}</p>}
       <div className="note-input-container">
         <textarea className='note-textarea' rows={4} value={note} onChange={(e) => setNote(e.target.value)}></textarea>
-        <button className='create-btn' onClick={handleUpdateOrCreateNote}>
+        <div className="notes-actions">
+          <button className='create-btn' onClick={handleUpdateOrCreateNote}>
           {editingNoteId ? "Update Note" : "Create Note"}
-        </button>
+          </button>
+          <button className="cancel-btn" onClick={handleCancelNote}>Cancel</button>
+        </div>
       </div>
       <div className='notes-grid'>
-        {notes.length > 0 && notes.map((note) => {
+        {notes.length > 0 ? (notes.map((note) => {
+          const date = new Date(note.date).toLocaleDateString('en-CA');
           return (
             <div className='notes-card' key={note.note_id}>
             <p className='notes-text'>{note.note}</p>
-            <p className='notes-date'>{note.date}</p>
+            <p className='notes-date'>{date}</p>
             <div className='notes-actions'>
               <button className='edit-btn' onClick={() => handleEditNote(note)}>Edit</button>
               <button className='delete-btn' onClick={() => handleDeleteNote(note)}>Delete</button>
             </div>
-          </div>
-          );
-        })}
-        
+          </div>)
+          })) : (<p className='no-notes'>No notes available. Create a new note!</p>)
+        }
       </div>
     </div>
   )

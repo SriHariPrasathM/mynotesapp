@@ -216,7 +216,7 @@ nav{
     padding : 0.75rem;
     border : 1px solid #d1d5db;
     border-radius : 4px; 
-    font-size : 0.75rem;
+    font-size : 1rem;
     resize : vertical;
 }
 
@@ -224,6 +224,13 @@ nav{
     outline : none;
     border-color : #3b82f6;
     box-shadow : 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.no-notes {
+  text-align: center;
+  color: #666;
+  margin-top: 20px;
+  font-size: 1.1rem;
 }
 
 .notes-grid{
@@ -258,7 +265,8 @@ nav{
 
 .edit-btn,
 .delete-btn,
-.create-btn{
+.create-btn,
+.cancel-btn{
     color : white;
     padding : 0.5rem 1rem;
     border-radius : 4px;
@@ -275,7 +283,8 @@ nav{
     background-color : #3b82f6;
 }
 
-.delete-btn{
+.delete-btn,
+.cancel-btn{
     background-color : #dc2626;
 }
 
@@ -283,7 +292,8 @@ nav{
     background-color : #d97706;
 }
 
-.delete-btn:hover{
+.delete-btn:hover, 
+.cancel-btn:hover{
     background-color : #b91c1c;
 }
 
