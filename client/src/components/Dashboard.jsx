@@ -7,6 +7,7 @@ function Dashboard() {
   const [note, setNote] = useState("");
   const [error, setError] = useState("");
   const [editingNoteId, setEditingNoteId] = useState(null);
+  const [selectedNotes, setSelectedNotes] = useState([]);
 
   const handleUpdateOrCreateNote = async () => {
     try {
@@ -63,6 +64,42 @@ function Dashboard() {
     }
   }
 
+  const toggleNoteSelection = (id) => {
+    setSelectedNotes(prev =>
+      prev.includes(id) ? prev.filter(nid => nid !== id) : [...prev, id]
+    );
+  };
+
+  const handleDeleteSelected = async () => {
+    if (confirm("Delete selected notes?")) {
+      try {
+        await axios.delete('http://localhost:5000/api/v1/notes/delete-selected', 
+          { 
+            //HTTP specification does not support body for DELETE requests, but 
+            //axios.delete(url, { data: ..., ... }) does allow it
+            data : { noteIds: selectedNotes },  
+            withCredentials: true
+        });
+        setSelectedNotes([]);
+        fetchNotes();
+      } catch (error) {
+        setError("Error deleting selected notes");
+      }
+    }
+  };
+
+  const handleDeleteAll = async () => {
+    if (confirm("Are you sure you want to delete ALL your notes?")) {
+      try {
+        await axios.delete('http://localhost:5000/api/v1/notes/delete-all', { withCredentials: true });
+        setSelectedNotes([]);
+        fetchNotes();
+      } catch (error) {
+        setError("Error deleting all notes");
+      }
+    }
+  };
+
   useEffect(() => {
     fetchNotes();
   }, []);
@@ -85,14 +122,30 @@ function Dashboard() {
           const date = new Date(note.date).toLocaleDateString('en-CA');
           return (
             <div className='notes-card' key={note.note_id}>
-            <p className='notes-text'>{note.note}</p>
-            <p className='notes-date'>{date}</p>
-            <div className='notes-actions'>
-              <button className='edit-btn' onClick={() => handleEditNote(note)}>Edit</button>
-              <button className='delete-btn' onClick={() => handleDeleteNote(note)}>Delete</button>
+              <div className='notes-checkbox-container'>
+                <input className="note-checkbox"
+                type="checkbox"
+                checked={selectedNotes.includes(note.note_id)}
+                onChange={() => toggleNoteSelection(note.note_id)}
+                />
+              </div>
+              <div className="notes-content">
+                <p className='notes-text'>{note.note}</p>
+                <p className='notes-date'>{date}</p>
+                <div className='notes-actions'>
+                  <button className='edit-btn' onClick={() => handleEditNote(note)}>Edit</button>
+                  <button className='delete-btn' onClick={() => handleDeleteNote(note)}>Delete</button>
+                </div>
+              </div>
             </div>
-          </div>)
+            )
           })) : (<p className='no-notes'>No notes available. Create a new note!</p>)
+        }
+        {notes.length > 0 &&
+          <div className="notes-bulk-actions">
+            <button className='delete-selected-btn' disabled={selectedNotes.length === 0} onClick={handleDeleteSelected}>Delete Selected</button>
+            <button className='delete-all-btn' onClick={handleDeleteAll}>Delete All</button>
+          </div>
         }
       </div>
     </div>

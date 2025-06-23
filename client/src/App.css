@@ -240,10 +240,53 @@ nav{
 }
 
 .notes-card{
+    display: flex;
+    align-items: center;
     background-color : #fff;
     padding : 1rem;
     border-radius : 8px;
     box-shadow : 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom : 1rem;
+}
+
+.notes-checkbox-container{
+    display : flex;
+    align-items : center;
+    justify-content : center;
+    margin-right : 1rem;
+}
+
+.note-checkbox {
+    width: 20px;
+    height: 20px;
+    appearance: none;
+    border: 2px solid #555;
+    border-radius: 50%; /* Rounded circle */
+    background-color: #fff;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.note-checkbox:checked {
+    background-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+    border-color: #007bff;
+}
+
+.note-checkbox:checked::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: white;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+}
+
+.notes-content{
+    flex : 1;
 }
 
 .notes-text{
@@ -258,7 +301,8 @@ nav{
     margin-bottom : 1rem;
 }
 
-.notes-actions{
+.notes-actions,
+.notes-bulk-actions{
     display : flex;
     gap : 0.5rem;
 }
@@ -266,7 +310,9 @@ nav{
 .edit-btn,
 .delete-btn,
 .create-btn,
-.cancel-btn{
+.cancel-btn,
+.delete-all-btn,
+.delete-selected-btn{
     color : white;
     padding : 0.5rem 1rem;
     border-radius : 4px;
@@ -283,8 +329,22 @@ nav{
     background-color : #3b82f6;
 }
 
+.delete-selected-btn{
+    background-color :#0b29a3;
+}
+
+.delete-selected-btn:hover{
+    background-color : #0b1f7a;
+}
+
+.delete-selected-btn:disabled{
+    background-color : #3b82f6;
+    cursor : not-allowed;
+}
+
 .delete-btn,
-.cancel-btn{
+.cancel-btn,
+.delete-all-btn{
     background-color : #dc2626;
 }
 
@@ -293,7 +353,8 @@ nav{
 }
 
 .delete-btn:hover, 
-.cancel-btn:hover{
+.cancel-btn:hover,
+.delete-all-btn:hover{
     background-color : #b91c1c;
 }
 
